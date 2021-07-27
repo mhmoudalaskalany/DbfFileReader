@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using CommandLine.Text;
 using DbfDataReader;
+using FileReader.Extensions;
 
 namespace FileReader
 {
@@ -19,9 +20,9 @@ namespace FileReader
         {
             Console.WriteLine(HeadingInfo.Default);
             Console.WriteLine();
-            Console.WriteLine("Bulk copy from:");
+            Console.WriteLine("   Bulk copy from:");
             Console.WriteLine($"  DBF: {options.Dbf}");
-            Console.WriteLine("to:");
+            Console.WriteLine("   to: ");
             Console.WriteLine($"  Server: {options.Server}");
             Console.WriteLine($"  Database: {options.Database}");
             Console.WriteLine($"  Table: {options.Table}");

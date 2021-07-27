@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 
-namespace FileReader
+namespace FileReader.Extensions
 {
     public static class DbExtension
     {

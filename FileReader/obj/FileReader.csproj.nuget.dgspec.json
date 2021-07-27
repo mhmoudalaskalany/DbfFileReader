@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\My Work\\OCS\\Backend\\FileReader\\FileReader\\FileReader.csproj": {}
+    "D:\\Work\\My Work\\Freelance\\OCS\\DbfFileReader\\FileReader\\FileReader.csproj": {}
   },
   "projects": {
-    "C:\\My Work\\OCS\\Backend\\FileReader\\FileReader\\FileReader.csproj": {
+    "D:\\Work\\My Work\\Freelance\\OCS\\DbfFileReader\\FileReader\\FileReader.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\My Work\\OCS\\Backend\\FileReader\\FileReader\\FileReader.csproj",
+        "projectUniqueName": "D:\\Work\\My Work\\Freelance\\OCS\\DbfFileReader\\FileReader\\FileReader.csproj",
         "projectName": "FileReader",
-        "projectPath": "C:\\My Work\\OCS\\Backend\\FileReader\\FileReader\\FileReader.csproj",
-        "packagesPath": "C:\\Users\\Predator\\.nuget\\packages\\",
-        "outputPath": "C:\\My Work\\OCS\\Backend\\FileReader\\FileReader\\obj\\",
+        "projectPath": "D:\\Work\\My Work\\Freelance\\OCS\\DbfFileReader\\FileReader\\FileReader.csproj",
+        "packagesPath": "C:\\Users\\m.ragab\\.nuget\\packages\\",
+        "outputPath": "D:\\Work\\My Work\\Freelance\\OCS\\DbfFileReader\\FileReader\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Predator\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\m.ragab\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -23,7 +23,7 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {},
-          "https://pkgs.dev.azure.com/youxelteam/_packaging/Youxel/nuget/v3/index.json": {}
+          "https://youxelteam.pkgs.visualstudio.com/_packaging/Youxel/nuget/v3/index.json": {}
         },
         "frameworks": {
           "net5.0": {
@@ -72,10 +72,6 @@
             "System.Data.SqlClient": {
               "target": "Package",
               "version": "[4.8.2, )"
-            },
-            "dBASE.NET": {
-              "target": "Package",
-              "version": "[1.2.1, )"
             }
           },
           "imports": [
@@ -93,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
         }
       }
     }

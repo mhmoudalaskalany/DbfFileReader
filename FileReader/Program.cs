@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
+using FileReader.Extensions;
 using FileReader.Models;
 using Microsoft.Extensions.Configuration;
 
@@ -14,39 +15,62 @@ namespace FileReader
     {
         private static Options _options;
         private static IConfiguration _configuration = AppConfiguration.ReadConfigurationFromAppSettings();
+
+        #region Public Methods
+
+        /// <summary>
+        /// Kick Off
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            Console.WriteLine($"");
-
+            Console.WriteLine("Welcome To DBF File Reader (OCS-INFOTECH)");
+            Console.WriteLine($"Starting Reading File At {DateTime.Now}");
             _options = new Options();
             //ReadDbfFile();
             //DbfFileDataReader.GetColumnsDetails();
             DbfFileDataReader.RunAndReturnExitCode(_options);
             //OledbReader.ReadOledbFile();
-            var lastDayData = GetDataForExcel();
-            GenerateExcelFile(lastDayData);
+            var day = DateTime.Now.AddDays(-30);
+            var lastDayData = GetDataForExcel(day);
+            GenerateExcelFile(lastDayData , day);
         }
 
-        private static List<SqlRecord> GetDataForExcel()
+        #endregion
+        
+
+        #region Private Methods
+
+        /// <summary>
+        /// Getting Excel Data
+        /// </summary>
+        /// <param name="day"></param>
+        /// <returns></returns>
+        private static List<SqlRecord> GetDataForExcel(DateTime day)
         {
-            var yesterday = DateTime.Now.AddDays(-30);
+            
             var connectionString = DbfFileDataReader.BuildConnectionString(_options);
             var connection = new SqlConnection(connectionString);
             var command = new SqlCommand($"select * from {_options.Table} where DATUM >= @yesterday");
-            command.Parameters.AddWithValue("@yesterday", yesterday);
+            command.Parameters.AddWithValue("@yesterday", day);
             command.Connection = connection;
             connection.Open();
             using SqlDataReader dr = command.ExecuteReader();
             var list = dr.MapToList<SqlRecord>();
             Console.WriteLine(list.Count);
             return list;
-
         }
 
-        private static void GenerateExcelFile(List<SqlRecord> entities)
+        /// <summary>
+        /// Generating Excel File
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <param name="day"></param>
+        private static void GenerateExcelFile(List<SqlRecord> entities , DateTime day)
         {
             if (entities.Any())
             {
+                Console.WriteLine($"Generating Excel File Starting From {day.ToShortDateString()}...");
                 using var workbook = new XLWorkbook();
                 var worksheet = workbook.Worksheets.Add("Last Day");
                 var currentRow = 1;
@@ -77,13 +101,17 @@ namespace FileReader
                 workbook.SaveAs(stream);
                 var content = stream.ToArray();
                 var path = _configuration["ExcelPath"];
+                Console.WriteLine($"Writing");
                 bool exists = Directory.Exists(path);
 
                 if (!exists)
-                    System.IO.Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path);
                 File.WriteAllBytes(path + "Last Day.xlsx", content);
+                Console.ReadKey();
             }
-            
         }
+
+        #endregion
+        
     }
 }

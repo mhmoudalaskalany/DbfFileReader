@@ -2,7 +2,7 @@ using System;
 using System.Data.SqlClient;
 using System.Reflection;
 
-namespace FileReader
+namespace FileReader.Extensions
 {
     public static class SqlBulkCopyExtension
     {
