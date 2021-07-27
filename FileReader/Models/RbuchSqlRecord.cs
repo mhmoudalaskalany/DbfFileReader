@@ -3,7 +3,7 @@
 namespace FileReader.Models
 {
 
-    public class SqlRecord
+    public class RbuchSqlRecord
     {
         public decimal? RZELLE { get; set; }
         public DateTime? DATUM { get; set; }
