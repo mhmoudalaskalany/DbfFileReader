@@ -30,30 +30,72 @@ namespace FileReader
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Welcome To DBF File Reader (OCS-INFOTECH)");
             Console.WriteLine($"Starting Reading File At {DateTime.Now} .....");
-            _options = new Options();
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Please Enter Option For Files 1 for RBUCH and 2 for LFS");
-            int option = Convert.ToInt32(Console.ReadLine());
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            DbfFileDataReader.RunAndReturnExitCode(_options);
             var day = DateTime.Now.AddDays(-32);
-            if (option == 1)
-            {
-                var lastDayData = GetDataForRbuchExcel(day);
-                GenerateRbuchExcelFile(lastDayData , day);
-            }
-            else
-            {
-                var lastDayData = GetDataForLfsExcel(day);
-                GenerateLfsExcelFile(lastDayData , day);
-            }
-            
+            ReadUserInput();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
         }
 
         #endregion
-        
+
 
         #region Private Methods
+
+        /// <summary>
+        /// ReadUser Inputs
+        /// </summary>
+        private static void ReadUserInput()
+        {
+            Console.WriteLine("Please Enter Option For Files");
+            Console.WriteLine("1 - AUFTRAGA");
+            Console.WriteLine("2 - AUFTRAGB");
+            Console.WriteLine("3 - AUFTRAGC");
+            Console.WriteLine("4 - RBUCH");
+            Console.WriteLine("5 - LFS");
+            Console.WriteLine("6 - Exit");
+            switch (Console.ReadLine())
+            {
+                case "1":
+                {
+                    _options = new Options("AUFTRAGA", "AUFTRAGA");
+                    DbfFileDataReader.RunAndReturnExitCode(_options);
+                    ReadUserInput();
+                    break;
+                }
+                case "2":
+                {
+                    _options = new Options("AUFTRAGB", "AUFTRAGB");
+                    DbfFileDataReader.RunAndReturnExitCode(_options);
+                    ReadUserInput();
+                    break;
+                }
+                case "3":
+                {
+                    _options = new Options("AUFTRAGC", "AUFTRAGC");
+                    DbfFileDataReader.RunAndReturnExitCode(_options);
+                    ReadUserInput();
+                    break;
+                }
+                case "4":
+                {
+                    _options = new Options("RBUCH", "RBUCH");
+                    DbfFileDataReader.RunAndReturnExitCode(_options);
+                    ReadUserInput();
+                    break;
+                }
+                case "5":
+                {
+                    _options = new Options("LFS", "LFS");
+                    DbfFileDataReader.RunAndReturnExitCode(_options);
+                    ReadUserInput();
+                    break;
+                }
+                case "6":
+                {
+                    break;
+                }
+            }
+        }
 
         /// <summary>
         /// Getting Excel Data
@@ -62,7 +104,6 @@ namespace FileReader
         /// <returns></returns>
         private static List<RbuchSqlRecord> GetDataForRbuchExcel(DateTime day)
         {
-            
             var connectionString = DbfFileDataReader.BuildConnectionString(_options);
             var connection = new SqlConnection(connectionString);
             var command = new SqlCommand($"select * from {_options.Table} where DATUM >= @yesterday");
@@ -74,7 +115,7 @@ namespace FileReader
             Console.WriteLine(list.Count);
             return list;
         }
-        
+
         /// <summary>
         /// Getting Excel Data
         /// </summary>
@@ -82,7 +123,6 @@ namespace FileReader
         /// <returns></returns>
         private static List<LfsSqlRecord> GetDataForLfsExcel(DateTime day)
         {
-            
             var connectionString = DbfFileDataReader.BuildConnectionString(_options);
             var connection = new SqlConnection(connectionString);
             var command = new SqlCommand($"select * from {_options.Table} where DATUM >= @yesterday");
@@ -100,7 +140,7 @@ namespace FileReader
         /// </summary>
         /// <param name="entities"></param>
         /// <param name="day"></param>
-        private static void GenerateRbuchExcelFile(List<RbuchSqlRecord> entities , DateTime day)
+        private static void GenerateRbuchExcelFile(List<RbuchSqlRecord> entities, DateTime day)
         {
             if (entities.Any())
             {
@@ -150,14 +190,14 @@ namespace FileReader
                 Console.WriteLine("Exited Successfully");
             }
         }
-        
-        
+
+
         /// <summary>
         /// Generating Excel File
         /// </summary>
         /// <param name="entities"></param>
         /// <param name="day"></param>
-        private static void GenerateLfsExcelFile(List<LfsSqlRecord> entities , DateTime day)
+        private static void GenerateLfsExcelFile(List<LfsSqlRecord> entities, DateTime day)
         {
             if (entities.Any())
             {
@@ -252,6 +292,5 @@ namespace FileReader
         }
 
         #endregion
-        
     }
 }

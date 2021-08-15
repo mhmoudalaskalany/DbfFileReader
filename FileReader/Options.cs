@@ -3,17 +3,18 @@ using Microsoft.Extensions.Configuration;
 
 namespace FileReader
 {
-    public  class Options
+    public class Options
     {
-        private IConfiguration _configuration = AppConfiguration.ReadConfigurationFromAppSettings();
-        public Options()
+        private readonly IConfiguration _configuration = AppConfiguration.ReadConfigurationFromAppSettings();
+
+        public Options(string tableName, string dbFileName)
         {
             Server = _configuration["SqlCredentials:Server"];
             Database = _configuration["SqlCredentials:Database"];
             UserId = _configuration["SqlCredentials:Username"];
             Password = _configuration["SqlCredentials:Password"];
-            Dbf = _configuration["SqlCredentials:DbfFile"];
-            Table = _configuration["SqlCredentials:Table"];
+            Dbf = _configuration["DBFiles:" + dbFileName];
+            Table = _configuration["Tables:" + tableName];
         }
 
         [Option(Required = true, HelpText = "The database server")]
