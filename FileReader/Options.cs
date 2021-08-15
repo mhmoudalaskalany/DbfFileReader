@@ -7,12 +7,16 @@ namespace FileReader
     {
         private readonly IConfiguration _configuration = AppConfiguration.ReadConfigurationFromAppSettings();
 
-        public Options(string tableName, string dbFileName)
+        public Options()
         {
             Server = _configuration["SqlCredentials:Server"];
             Database = _configuration["SqlCredentials:Database"];
             UserId = _configuration["SqlCredentials:Username"];
             Password = _configuration["SqlCredentials:Password"];
+        }
+        public Options(string tableName, string dbFileName) : this()
+        {
+            
             Dbf = _configuration["DBFiles:" + dbFileName];
             Table = _configuration["Tables:" + tableName];
         }

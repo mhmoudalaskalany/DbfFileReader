@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace FileReader
     public class Program
     {
         private static Options _options;
+        private static readonly DateTime Day = new(2021, 7, 27);
         private static readonly IConfiguration Configuration = AppConfiguration.ReadConfigurationFromAppSettings();
 
         #region Public Methods
@@ -31,7 +33,6 @@ namespace FileReader
             Console.WriteLine("Welcome To DBF File Reader (OCS-INFOTECH)");
             Console.WriteLine($"Starting Reading File At {DateTime.Now} .....");
             Console.ForegroundColor = ConsoleColor.Blue;
-            var day = DateTime.Now.AddDays(-32);
             ReadUserInput();
             Console.ForegroundColor = ConsoleColor.DarkYellow;
         }
@@ -46,13 +47,15 @@ namespace FileReader
         /// </summary>
         private static void ReadUserInput()
         {
+            Console.WriteLine($"Day Data : {Day}");
             Console.WriteLine("Please Enter Option For Files");
             Console.WriteLine("1 - AUFTRAGA");
             Console.WriteLine("2 - AUFTRAGB");
             Console.WriteLine("3 - AUFTRAGC");
             Console.WriteLine("4 - RBUCH");
             Console.WriteLine("5 - LFS");
-            Console.WriteLine("6 - Exit");
+            Console.WriteLine("6 - Generate Excel");
+            Console.WriteLine("7 - Exit");
             switch (Console.ReadLine())
             {
                 case "1":
@@ -92,13 +95,124 @@ namespace FileReader
                 }
                 case "6":
                 {
+                    _options = new Options();
+                    GenerateFinalExcel();
+                    break;
+                }
+                case "7":
+                {
                     break;
                 }
             }
         }
 
         /// <summary>
-        /// Getting Excel Data
+        /// Generate Final Excel 
+        /// </summary>
+        private static void GenerateFinalExcel()
+        {
+            var data = GetFinalData();
+            var finalData = PrepareExcelData(data);
+        }
+
+
+        /// <summary>
+        /// Prepare FinalData
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private static List<object> PrepareExcelData(List<object> data)
+        {
+            var finalData = data;
+            return finalData;
+        }
+
+        /// <summary>
+        /// Get Final Data From Sql
+        /// </summary>
+        /// <returns></returns>
+        private static List<object> GetFinalData()
+        {
+            try
+            {
+                var connectionString = DbfFileDataReader.BuildConnectionString(_options);
+                var connection = new SqlConnection(connectionString);
+                var query = $"GetLastDayData";
+                var command = new SqlCommand(query) {CommandType = CommandType.StoredProcedure};
+                command.Parameters.AddWithValue("@Day", Day);
+                command.Connection = connection;
+                connection.Open();
+                using SqlDataReader dr = command.ExecuteReader();
+                var list = dr.MapToList<object>();
+                Console.WriteLine(list.Count);
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Getting Data For AUFTRAGA Excel Data
+        /// </summary>
+        /// <param name="day"></param>
+        /// <returns></returns>
+        private static List<AufTragA> GetDataForAufTragAExcel(DateTime day)
+        {
+            var connectionString = DbfFileDataReader.BuildConnectionString(_options);
+            var connection = new SqlConnection(connectionString);
+            var command = new SqlCommand($"select * from {_options.Table} where DATUM >= @yesterday");
+            command.Parameters.AddWithValue("@yesterday", day);
+            command.Connection = connection;
+            connection.Open();
+            using SqlDataReader dr = command.ExecuteReader();
+            var list = dr.MapToList<AufTragA>();
+            Console.WriteLine(list.Count);
+            return list;
+        }
+
+        /// <summary>
+        /// Getting Data For AUFTRAGC Excel Data
+        /// </summary>
+        /// <param name="day"></param>
+        /// <returns></returns>
+        private static List<AufTragB> GetDataForAufTragBExcel(DateTime day)
+        {
+            var connectionString = DbfFileDataReader.BuildConnectionString(_options);
+            var connection = new SqlConnection(connectionString);
+            var command = new SqlCommand($"select * from {_options.Table} where DATUM >= @yesterday");
+            command.Parameters.AddWithValue("@yesterday", day);
+            command.Connection = connection;
+            connection.Open();
+            using SqlDataReader dr = command.ExecuteReader();
+            var list = dr.MapToList<AufTragB>();
+            Console.WriteLine(list.Count);
+            return list;
+        }
+
+        /// <summary>
+        /// Getting Data For AUFTRAGC Excel Data
+        /// </summary>
+        /// <param name="day"></param>
+        /// <returns></returns>
+        private static List<AufTragC> GetDataForAufTragCExcel(DateTime day)
+        {
+            var connectionString = DbfFileDataReader.BuildConnectionString(_options);
+            var connection = new SqlConnection(connectionString);
+            var command = new SqlCommand($"select * from {_options.Table} where DATUM >= @yesterday");
+            command.Parameters.AddWithValue("@yesterday", day);
+            command.Connection = connection;
+            connection.Open();
+            using SqlDataReader dr = command.ExecuteReader();
+            var list = dr.MapToList<AufTragC>();
+            Console.WriteLine(list.Count);
+            return list;
+        }
+
+        /// <summary>
+        /// Getting Data For  Excel RBUCH
         /// </summary>
         /// <param name="day"></param>
         /// <returns></returns>
