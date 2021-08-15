@@ -11,10 +11,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace FileReader
 {
+    /// <summary>
+    /// Kick Off
+    /// </summary>
     public class Program
     {
         private static Options _options;
-        private static IConfiguration _configuration = AppConfiguration.ReadConfigurationFromAppSettings();
+        private static readonly IConfiguration Configuration = AppConfiguration.ReadConfigurationFromAppSettings();
 
         #region Public Methods
 
@@ -132,7 +135,7 @@ namespace FileReader
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 var content = stream.ToArray();
-                var path = _configuration["ExcelPath"];
+                var path = Configuration["ExcelPath"];
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"Writing Excel File To Path {path}");
                 bool exists = Directory.Exists(path);
@@ -232,7 +235,7 @@ namespace FileReader
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 var content = stream.ToArray();
-                var path = _configuration["ExcelPath"];
+                var path = Configuration["ExcelPath"];
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"Writing Excel File To Path {path}");
                 bool exists = Directory.Exists(path);
