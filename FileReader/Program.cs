@@ -113,6 +113,7 @@ namespace FileReader
         {
             var data = GetFinalData();
             var finalData = PrepareExcelData(data);
+            GenerateFile(finalData , Day);
         }
 
 
@@ -121,17 +122,103 @@ namespace FileReader
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        private static List<object> PrepareExcelData(List<object> data)
+        private static List<FinalModel> PrepareExcelData(List<CombinedModel> data)
         {
-            var finalData = data;
+            var finalData = new List<FinalModel>();
+            var grouped = data.GroupBy(a => a.ProcessOrderNumber);
+            foreach (var group in grouped)
+            {
+                var finalModel = new FinalModel
+                {
+                    FgMaterialCode = group.First().FgMaterialCode,
+                    ProductVersion = group.First().ProductVersion,
+                    PlantCode = "",
+                    ProductionLine = "",
+                    ProcessOrderType = "",
+                    ProcessOrderNumber = group.Key,
+                    TotalQty = group.First().Charge * group.First().BatchCount,
+                    UnitOfMeasure = "KG",
+                    BatchCount = group.First().BatchCount,
+                    EndDate = group.Last().EndDate,
+                    EndTime = group.Last().EndTime,
+                    StartDate = group.First().StartDate,
+                    StartTime = group.First().StartTime,
+                    RawCodeMaterial = group.First().RawCodeMaterial,
+                    ActualQty = group.Sum(x => x.CurrentQuantity)
+                };
+                finalData.Add(finalModel);
+            }
+            
             return finalData;
         }
+        
+        /// <summary>
+        /// Generating Excel File For Final Model Data
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <param name="day"></param>
+        private static void GenerateFile(List<FinalModel> entities, DateTime day)
+        {
+            if (entities.Any())
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine($"Generating Excel File Starting From Day : {day.ToShortDateString()}...");
+                using var workbook = new XLWorkbook();
+                var worksheet = workbook.Worksheets.Add("Last Day");
+                var currentRow = 1;
+                var properties = entities.First().GetType().GetProperties();
+                var columnNumber = 0;
+                // set header columns
+                foreach (var prop in properties)
+                {
+                    worksheet.Cell(currentRow, ++columnNumber).Value = prop.Name;
+                }
+
+                foreach (var record in entities)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = record.FgMaterialCode;
+                    worksheet.Cell(currentRow, 2).Value = record.ProductVersion;
+                    worksheet.Cell(currentRow, 3).Value = record.PlantCode;
+                    worksheet.Cell(currentRow, 4).Value = record.ProductionLine;
+                    worksheet.Cell(currentRow, 5).Value = record.ProcessOrderType;
+                    worksheet.Cell(currentRow, 6).Value = record.ProcessOrderNumber;
+                    worksheet.Cell(currentRow, 7).Value = record.TotalQty;
+                    worksheet.Cell(currentRow, 8).Value = record.UnitOfMeasure;
+                    worksheet.Cell(currentRow, 9).Value = record.BatchCount;
+                    worksheet.Cell(currentRow, 10).Value = record.EndDate;
+                    worksheet.Cell(currentRow, 11).Value = record.EndTime;
+                    worksheet.Cell(currentRow, 12).Value = record.StartDate;
+                    worksheet.Cell(currentRow, 13).Value = record.StartTime;
+                    worksheet.Cell(currentRow, 14).Value = record.RawCodeMaterial;
+                    worksheet.Cell(currentRow, 15).Value = record.ActualQty;
+                }
+
+                using var stream = new MemoryStream();
+                workbook.SaveAs(stream);
+                var content = stream.ToArray();
+                var path = Configuration["ExcelPath"];
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Writing Excel File To Path {path}");
+                bool exists = Directory.Exists(path);
+
+                if (!exists)
+                    Directory.CreateDirectory(path);
+                File.WriteAllBytes($"{path}PrdHdr_{day.Year}{day.Month}{day.Day}.xlsx", content);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Writing File Success");
+                Console.WriteLine("Press Enter To Exit");
+                Console.ReadKey();
+                Console.WriteLine("Exited Successfully");
+            }
+        }
+
 
         /// <summary>
         /// Get Final Data From Sql
         /// </summary>
         /// <returns></returns>
-        private static List<object> GetFinalData()
+        private static List<CombinedModel> GetFinalData()
         {
             try
             {
@@ -143,7 +230,7 @@ namespace FileReader
                 command.Connection = connection;
                 connection.Open();
                 using SqlDataReader dr = command.ExecuteReader();
-                var list = dr.MapToList<object>();
+                var list = dr.MapToList<CombinedModel>();
                 Console.WriteLine(list.Count);
                 return list;
             }
