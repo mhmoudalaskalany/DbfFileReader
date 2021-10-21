@@ -98,12 +98,14 @@ namespace FileReader
                 {
                     _options = new Options();
                     GenerateFinalExcel();
+                    ReadUserInput();
                     break;
                 }
                 case "7":
                 {
                     _options = new Options();
                     GenerateSummaryExcel();
+                    ReadUserInput();
                     break;
                 }
                 case "8":
@@ -222,9 +224,6 @@ namespace FileReader
                 File.WriteAllBytes($"{path}PrdHdr_{day.Year}{day.Month}{day.Day}.xlsx", content);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Writing File Success");
-                Console.WriteLine("Press Enter To Exit");
-                Console.ReadKey();
-                Console.WriteLine("Exited Successfully");
             }
         }
 
@@ -357,9 +356,6 @@ namespace FileReader
                 File.WriteAllBytes($"{path}PrdDtl_{day.Year}{day.Month}{day.Day}.xlsx", content);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Writing File Success");
-                Console.WriteLine("Press Enter To Exit");
-                Console.ReadKey();
-                Console.WriteLine("Exited Successfully");
             }
         }
         #endregion
