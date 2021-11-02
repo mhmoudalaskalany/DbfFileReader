@@ -366,7 +366,7 @@ namespace FileReader.DbfReader
         {
             var connectionString = DbfFileDataReader.BuildConnectionString(_options);
             var connection = new SqlConnection(connectionString);
-            var query = $"GetSummaryLastDayData";
+            var query = $"GetLfsLastDayData";
             var command = new SqlCommand(query) { CommandType = CommandType.StoredProcedure };
             command.Parameters.AddWithValue("@Day", Day);
             command.Connection = connection;
