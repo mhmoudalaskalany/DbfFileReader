@@ -24,14 +24,15 @@ namespace FileReader
            
             try
             {
-                Console.CancelKeyPress += (sender, eArgs) => {
-                    _quitEvent.Set();
-                    eArgs.Cancel = true;
-                };
-                JobManager.Initialize(new DbfRegistry());
-                // kick off asynchronous stuff 
+                DbfReader.DbfReader.ReadUserInput();
+                //Console.CancelKeyPress += (sender, eArgs) => {
+                //    _quitEvent.Set();
+                //    eArgs.Cancel = true;
+                //};
+                //JobManager.Initialize(new DbfRegistry());
+                //// kick off asynchronous stuff 
 
-                _quitEvent.WaitOne();
+                //_quitEvent.WaitOne();
 
             }
             catch (Exception e)

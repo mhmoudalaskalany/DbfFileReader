@@ -90,6 +90,13 @@ namespace FileReader.DbfReader
                         break;
                     }
                 case "8":
+                {
+                    _options = new Options();
+                    GenerateLfsExcel();
+                    ReadUserInput();
+                    break;
+                }
+                case "9":
                     {
                         break;
                     }
@@ -293,6 +300,8 @@ namespace FileReader.DbfReader
             return newList;
         }
 
+        
+
         /// <summary>
         /// Generate Final Summary Excel
         /// </summary>
@@ -339,6 +348,97 @@ namespace FileReader.DbfReader
                 Console.WriteLine("Writing File Success");
             }
         }
+
+        ////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////LFS Excel //////////////////////////
+        /// ////////////////////////////////////////////////////////////////////
+        /// /// <summary>
+        /// Generate LFS Excel Sheet
+        /// </summary>
+        private static void GenerateLfsExcel()
+        {
+            var data = GetLfsExcelData();
+            GenerateLfsExcel(data, Day);
+        }
+
+        private static List<LfsExcelModel> GetLfsExcelData()
+        {
+            var connectionString = DbfFileDataReader.BuildConnectionString(_options);
+            var connection = new SqlConnection(connectionString);
+            var query = $"GetSummaryLastDayData";
+            var command = new SqlCommand(query) { CommandType = CommandType.StoredProcedure };
+            command.Parameters.AddWithValue("@Day", Day);
+            command.Connection = connection;
+            connection.Open();
+            using SqlDataReader dr = command.ExecuteReader();
+            var list = dr.MapToList<LfsExcelModel>();
+            Console.WriteLine(list.Count);
+            return list;
+        }
+
+      
+
+
+        /// <summary>
+        /// Generate Final Summary Excel
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <param name="day"></param>
+        private static void GenerateLfsExcel(List<LfsExcelModel> entities, DateTime day)
+        {
+            if (entities.Any())
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine($"Generating Excel File Starting From Day : {day.ToShortDateString()}...");
+                using var workbook = new XLWorkbook();
+                var worksheet = workbook.Worksheets.Add("Proposed");
+                var currentRow = 1;
+                var properties = entities.First().GetType().GetProperties();
+                var columnNumber = 0;
+                // set header columns
+                foreach (var prop in properties)
+                {
+                    worksheet.Cell(currentRow, ++columnNumber).Value = prop.Name;
+                }
+
+                foreach (var record in entities)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = record.SrNo;
+                    worksheet.Cell(currentRow, 2).Value = record.MaterialCode;
+                    worksheet.Cell(currentRow, 3).Value = record.MaterialDescription;
+                    worksheet.Cell(currentRow, 4).Value = record.DeliveryType;
+                    worksheet.Cell(currentRow, 5).Value = record.DeliveryNo;
+                    worksheet.Cell(currentRow, 6).Value = record.ReferenceDocNo;
+                    worksheet.Cell(currentRow, 7).Value = record.ContainerNo;
+                    worksheet.Cell(currentRow, 8).Value = record.TransporterName;
+                    worksheet.Cell(currentRow, 9).Value = record.VehicleNo;
+                    worksheet.Cell(currentRow, 10).Value = record.InDate;
+                    worksheet.Cell(currentRow, 11).Value = record.InTime;
+                    worksheet.Cell(currentRow, 12).Value = record.OutDate;
+                    worksheet.Cell(currentRow, 13).Value = record.OutTime;
+                    worksheet.Cell(currentRow, 14).Value = record.TareWeight;
+                    worksheet.Cell(currentRow, 15).Value = record.GrossWeight;
+                    worksheet.Cell(currentRow, 16).Value = record.NetWeight;
+                    worksheet.Cell(currentRow, 17).Value = record.Weigher;
+                }
+
+                using var stream = new MemoryStream();
+                workbook.SaveAs(stream);
+                var content = stream.ToArray();
+                var path = Configuration["ExcelPath"];
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Writing Excel File To Path {path}");
+                bool exists = Directory.Exists(path);
+
+                if (!exists)
+                    Directory.CreateDirectory(path);
+                File.WriteAllBytes($"{path}Weigh Bridge Template.xlsx", content);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Writing File Success");
+            }
+        }
+
         #endregion
 
 
