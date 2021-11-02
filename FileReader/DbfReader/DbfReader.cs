@@ -14,14 +14,14 @@ namespace FileReader.DbfReader
     public class DbfReader
     {
         private static Options _options;
-        private static readonly DateTime Day = new DateTime(2021, 7, 27);
+        private static readonly DateTime Day = new DateTime(2021, 6, 27);
         private static readonly IConfiguration Configuration = AppConfiguration.ReadConfigurationFromAppSettings();
         #region Private Methods
 
         /// <summary>
         /// ReadUser Inputs
         /// </summary>
-        public  static void ReadUserInput()
+        public static void ReadUserInput()
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Welcome To DBF File Reader (OCS-INFOTECH)");
@@ -37,7 +37,8 @@ namespace FileReader.DbfReader
             Console.WriteLine("5 - LFS");
             Console.WriteLine("6 - Generate Excel");
             Console.WriteLine("7 - Generate Summary Excel");
-            Console.WriteLine("8 - Exit");
+            Console.WriteLine("8 - Generate Lfs Excel");
+            Console.WriteLine("9 - Exit");
             switch (Console.ReadLine())
             {
                 case "1":
@@ -90,12 +91,12 @@ namespace FileReader.DbfReader
                         break;
                     }
                 case "8":
-                {
-                    _options = new Options();
-                    GenerateLfsExcel();
-                    ReadUserInput();
-                    break;
-                }
+                    {
+                        _options = new Options();
+                        GenerateLfsExcel();
+                        ReadUserInput();
+                        break;
+                    }
                 case "9":
                     {
                         break;
@@ -300,7 +301,7 @@ namespace FileReader.DbfReader
             return newList;
         }
 
-        
+
 
         /// <summary>
         /// Generate Final Summary Excel
@@ -376,7 +377,7 @@ namespace FileReader.DbfReader
             return list;
         }
 
-      
+
 
 
         /// <summary>
