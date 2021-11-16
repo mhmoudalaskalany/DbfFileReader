@@ -15,7 +15,7 @@ namespace FileReader.DbfReader
     public class DbfReader
     {
         private static Options _options;
-        private static readonly DateTime Day = new DateTime(2021, 6, 27);
+        private static readonly DateTime Day = new(2021, 11, 16);
         private static readonly IConfiguration Configuration = AppConfiguration.ReadConfigurationFromAppSettings();
         #region Private Methods
 
