@@ -1,1 +1,1 @@
-dotnet DBFImport.dll --path "d:\OCS\*.DBF" --connectionstring "Server=.;Database=OcsDb;User Id=sa;Password=123456"
+dotnet DBFImport.dll --path "d:\OCS\DbfFiles\*.DBF" --connectionstring "Server=.;Database=OcsDb;User Id=sa;Password=123456"
