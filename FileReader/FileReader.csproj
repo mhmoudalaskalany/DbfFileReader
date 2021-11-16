@@ -13,6 +13,7 @@
       <PackageReference Include="FluentScheduler" Version="5.5.1" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+      <PackageReference Include="SimpleImpersonation" Version="3.0.0" />
       <PackageReference Include="System.Data.Odbc" Version="5.0.0" />
       <PackageReference Include="System.Data.OleDb" Version="5.0.0" />
       <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
