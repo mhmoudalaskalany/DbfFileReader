@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
 using FileReader.Extensions;
+using FileReader.FileWriter;
 using FileReader.Models;
 using Microsoft.Extensions.Configuration;
 
@@ -38,7 +39,8 @@ namespace FileReader.DbfReader
             Console.WriteLine("6 - Generate Excel");
             Console.WriteLine("7 - Generate Summary Excel");
             Console.WriteLine("8 - Generate Lfs Excel");
-            Console.WriteLine("9 - Exit");
+            Console.WriteLine("9 - Get Directories");
+            Console.WriteLine("10 - Exit");
             switch (Console.ReadLine())
             {
                 case "1":
@@ -99,8 +101,13 @@ namespace FileReader.DbfReader
                     }
                 case "9":
                     {
+                        LocalStorageService.GetDirectoriesAsync();
                         break;
                     }
+                case "10":
+                {
+                    break;
+                }
             }
         }
 
@@ -428,15 +435,18 @@ namespace FileReader.DbfReader
                 workbook.SaveAs(stream);
                 var content = stream.ToArray();
                 var path = Configuration["ExcelPath"];
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"Writing Excel File To Path {path}");
-                bool exists = Directory.Exists(path);
 
-                if (!exists)
-                    Directory.CreateDirectory(path);
-                File.WriteAllBytes($"{path}Weigh Bridge Template.xlsx", content);
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Writing File Success");
+                LocalStorageService.StoreBytes(content, path, "Weigh Bridge Template", "xlsx");
+
+                //Console.ForegroundColor = ConsoleColor.Yellow;
+                //Console.WriteLine($"Writing Excel File To Path {path}");
+                //bool exists = Directory.Exists(path);
+
+                //if (!exists)
+                //    Directory.CreateDirectory(path);
+                //File.WriteAllBytes($"{path}Weigh Bridge Template.xlsx", content);
+                //Console.ForegroundColor = ConsoleColor.Green;
+                //Console.WriteLine("Writing File Success");
             }
         }
 
